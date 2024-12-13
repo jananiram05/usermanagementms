@@ -14,8 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@AllArgsConstructor
-@NoArgsConstructor(force = true)
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,14 +22,30 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
 
+    public UserServiceImpl(UserRepository userRepository, AccountRepository accountRepository) {
+        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
+    }
+
 
     @Override
     public User createUser(User user) {
         if (user.getKycStatus() == null || user.getKycStatus().isBlank()) {
             user.setKycStatus("PENDING"); // Assign default
         }
+
+
         logger.info("Creating new user: {}", user.getUsername());
-        return userRepository.save(user);
+        user =userRepository.save(user);
+        // Now, associate each account with the saved user
+        for (Account account : user.getAccounts()) {
+            account.setUser(user);  // Set the user reference for each account
+        }
+
+        // Save the accounts
+        accountRepository.saveAll(user.getAccounts());
+
+        return user;
     }
 
     @Override

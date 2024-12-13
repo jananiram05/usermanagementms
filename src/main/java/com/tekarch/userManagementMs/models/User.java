@@ -1,5 +1,6 @@
 package com.tekarch.userManagementMs.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class User {
     @Column(name = "email", nullable = false, unique = true, length = 100)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String passwordHash;
 
     @Column(name = "phone_number", unique = true, length = 15)
@@ -49,7 +50,7 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @JsonManagedReference // Marking this side of the relationship for serialization
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts; // List of accounts for the user
 }
-

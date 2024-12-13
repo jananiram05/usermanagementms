@@ -1,6 +1,7 @@
 package com.tekarch.userManagementMs.models;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,6 +24,8 @@ public class Account {
 
     @ManyToOne(fetch = FetchType.LAZY) // Many accounts belong to one user
     @JoinColumn(name = "user_id", nullable = false) // Foreign key to User
+    @JsonBackReference // Marking this side of the relationship to avoid serialization
+
     private User user;
 
     @Column(name = "account_number", nullable = false, unique = true, length = 20)
